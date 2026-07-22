@@ -1,0 +1,10 @@
+commands:
+    employee:
+        insert: |
+            curl -X POST http://localhost:8000/api/employees/ -H "Content-Type: application/json" -d '{"first_name":"Mani","last_name":"Rad","email":"mani.rad@example.com"}'
+
+        select_all: |
+            curl http://localhost:8000/api/employees/
+            
+        
+            
