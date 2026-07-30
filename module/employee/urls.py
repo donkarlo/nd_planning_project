@@ -11,16 +11,27 @@ urlpatterns = [
         "",
         EmployeeCollectionView.as_view(),
     ),
-    path(
-        "time-tracking/statistics/",
-        GlobalStatisticsView.as_view(),
-    ),
-    path(
-        "<int:employee_id>/time-tracking/",
-        include("module.employee.module.time_tracking.urls"),
-    ),
+
+
     path(
         "<int:employee_id>/",
         EmployeeDetailView.as_view(),
     ),
+
+    # this one doesnt need role_name
+    path(
+        "time-tracking/statistics/",
+        GlobalStatisticsView.as_view(),
+    ),
+
+    # including the urls related to work shifts and time tracking
+    path(
+        "<int:employee_id>/time-tracking/",
+        include("module.employee.module.time_tracking.urls"),
+    ),
+    # Adding the urls for role
+    path(
+        "<int:employee_id>/role/",
+        include("module.employee.module.role.urls"),
+    )
 ]

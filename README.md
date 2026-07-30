@@ -38,40 +38,58 @@ The project has one Django module, `employee`, and `time_tracking` is a submodul
 ```text
 module/
 └── employee/
-    ├── apps.py                                  # Django app configuration
-    ├── urls.py                                  # Employee API routes
+    ├── apps.py                                      # Django app configuration
+    ├── urls.py                                      # Employee, time-tracking, and role API routes
     ├── management/
     │   └── commands/
-    │       └── seed_demo_data.py                # Creates demo employees and work shifts
+    │       └── seed_demo_data.py                    # Creates demo employees, work shifts, and roles
     ├── migrations/
-    │   └── 0001_initial.py                      # Initial database schema
+    │   ├── 0001_initial.py                          # Creates employee and employee_work_shift tables
+    │   └── 0002_employee_role.py                    # Creates the employees_roles table
     ├── models/
-    │   └── employee.py                          # Employee database model
+    │   └── employee.py                              # Employee domain model
     ├── serializers/
-    │   └── employee_serializer.py               # Validates employee request and response data
+    │   └── employee_serializer.py                   # Validates employee request data
     ├── repositories/
-    │   └── employee_repository.py               # Executes employee CRUD database queries
-    ├── views/                                   # To handle the requests and provide reponses similar to controller in MVC
-    │   ├── employee_collection_view.py          # Lists and creates employees
-    │   └── employee_detail_view.py              # Retrieves, updates, and deletes one employee
+    │   └── employee_repository.py                   # Executes employee CRUD SQL queries
+    ├── views/                                       # Handles employee HTTP requests and responses
+    │   ├── employee_collection_view.py              # Lists and creates employees
+    │   └── employee_detail_view.py                  # Retrieves, updates, and deletes one employee
+    ├── services/
+    │   └── sevices.py                               # Documents the responsibility of service classes
     └── module/
-        └── time_tracking/
-            ├── urls.py                          # Work-shift and statistics API routes
-            ├── models/
-            │   └── work_shift.py                # Work-shift database model
-            ├── serializers/
-            │   └── work_shift_serializer.py     # Validates work-shift request and response data
-            ├── repositories/
-            │   └── work_shift_repository.py     # Executes work-shift CRUD database queries
-            ├── services/
-            │   ├── overlap_validation_service.py # Prevents overlapping work shifts
-            │   ├── employee_summary_service.py   # Calculates one employee's work summary
-            │   └── global_statistics_service.py  # Calculates statistics for all employees
-            └── views/                            # To handle request and validate responses
-                ├── work_shift_collection_view.py # Lists and creates work shifts
-                ├── work_shift_detail_view.py     # Retrieves, updates, and deletes one work shift
-                ├── employee_summary_view.py      # Returns one employee's work summary
-                └── global_statistics_view.py     # Returns statistics for all employees
+        ├── time_tracking/
+        │   ├── time_tracking.py                     # Marker class for locating the module in the IDE
+        │   ├── urls.py                              # Work-shift, summary, and statistics API routes
+        │   ├── models/
+        │   │   └── work_shift.py                    # Work-shift domain model
+        │   ├── serializers/
+        │   │   └── work_shift_serializer.py         # Validates work-shift request data
+        │   ├── repositories/
+        │   │   └── work_shift_repository.py         # Executes work-shift CRUD SQL queries
+        │   ├── services/
+        │   │   ├── work_shift_validator.py          # Validates shift times and prevents overlaps
+        │   │   ├── employee_summary_service.py      # Calculates one employee's work summary
+        │   │   └── global_statistics_service.py     # Calculates statistics for all employees
+        │   └── views/                               # Handles time-tracking HTTP requests and responses
+        │       ├── work_shift_collection_view.py    # Lists and creates work shifts
+        │       ├── work_shift_detail_view.py        # Retrieves, updates, and deletes one work shift
+        │       ├── employee_summary_view.py         # Returns one employee's work summary
+        │       └── global_statistics_view.py        # Returns statistics for all employees
+        └── role/
+            ├── role.py                              # Marker class for locating the module in the IDE
+            ├── urls.py                              # Employee-role API routes
+            ├── model/
+            │   └── employee_role.py                 # Employee-role domain model
+            ├── serializer/
+            │   └── employees_roles.py               # Validates employee-role request data
+            ├── repository/
+            │   └── employees_roles.py               # Executes employee-role CRUD SQL queries
+            ├── service/
+            │   └── employee_role_validator.py       # Validates role names and prevents duplicates
+            └── view/                                # Handles employee-role HTTP requests and responses
+                ├── employees_roles_collection.py    # Lists and creates roles for one employee
+                └── employees_roles_detail.py        # Retrieves, updates, and deletes one employee role
 ```
 ## Databse
 A readable copy of all SQL is available in `data/sql/crud.sql`. The database schema is in `data/sql/schema.sql` and in the initial Django migration.
@@ -85,7 +103,7 @@ to move between migration
 ### Database schema
 ![databse schema](data/sql/schema.png)
 
-# installing the project
+# Installing the project
 Warning: since I use ubuntu 20.04, I use an old version of composer  so might need to use `docker compose` instead of
 `docker-compose` every where
 
@@ -171,6 +189,8 @@ docker-compose restart db
 
 # API URLs
 
+# API URLs
+
 | Method | URL | Purpose |
 |---|---|---|
 | GET | `/api/employees/` | List employees |
@@ -187,6 +207,12 @@ docker-compose restart db
 | DELETE | `/api/employees/{employee_id}/time-tracking/{shift_id}/` | Delete a shift |
 | GET | `/api/employees/{employee_id}/time-tracking/summary/` | Employee summary |
 | GET | `/api/employees/time-tracking/statistics/` | Global statistics |
+| GET | `/api/employees/{employee_id}/role/` | List the employee's roles |
+| POST | `/api/employees/{employee_id}/role/` | Assign a role to the employee |
+| GET | `/api/employees/{employee_id}/role/{role_name}/` | Get one employee role |
+| PUT | `/api/employees/{employee_id}/role/{role_name}/` | Replace an employee role |
+| PATCH | `/api/employees/{employee_id}/role/{role_name}/` | Partially update an employee role |
+| DELETE | `/api/employees/{employee_id}/role/{role_name}/` | Remove a role from the employee |
 
 ## Small request example
 
@@ -211,23 +237,25 @@ curl -i -X POST http://127.0.0.1:8000/api/employees/4/time-tracking/ \
 sudo apt-get install jq
 ```
 
-## Get all shifts of employee 2
+## List work shifts for employee 2
 
 ```bash
-curl -s http://127.0.0.1:8000/api/employees/2/time-tracking/ | jq
+curl -s http://localhost:8000/api/employees/2/time-tracking/ | jq
 ```
 
-## Get the summary for employee 2:
+## Get the summary for employee 2
+
 ```bash
 curl -s http://localhost:8000/api/employees/2/time-tracking/summary/ | jq
 ```
 
 ## Get global statistics
+
 ```bash
-curl -s GET http://localhost:8000/api/employees/time-tracking/statistics/ | jq
+curl -s http://localhost:8000/api/employees/time-tracking/statistics/ | jq
 ```
 
-## Overlap rule
+## shift overlap rule
 
 Shifts use half-open intervals: `[start_time, end_time)`. Therefore, a shift ending at `16:00` and another starting at `16:00` do not overlap.
 

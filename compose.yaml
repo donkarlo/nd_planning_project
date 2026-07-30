@@ -1,4 +1,4 @@
-# defines the services, networks, volumes, and configuration required to run a multi-container Docker application.
+# defines the service, networks, volumes, and configuration required to run a multi-container Docker application.
 
 services:
   db:

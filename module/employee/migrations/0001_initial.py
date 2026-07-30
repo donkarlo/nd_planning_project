@@ -39,17 +39,9 @@ DROP TABLE IF EXISTS employee;
 
 class Migration(migrations.Migration):
     initial = True
-
-    """
-    indicates what other migration must be ran before this one 
-    [
-        ("employee", "0001_initial"),
-        ("another_app", "0003_something"),
-    ]
-    """
     dependencies: list[tuple[str, str]] = []
     """
-    The list of operations that  that are written above 
+    The list of actions that are written above 
     """
     operations = [
         migrations.RunSQL(

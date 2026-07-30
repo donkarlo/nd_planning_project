@@ -10,7 +10,7 @@ from module.employee.serializers.employee_serializer import EmployeeSerializer
 
 class EmployeeCollectionView(APIView):
     """
-    The source that manages  the set of employees
+    This class is responsible for employees set and it doesnt need role_name
     """
 
     # the repository shared between all objects built based on this class

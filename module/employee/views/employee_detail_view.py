@@ -9,6 +9,9 @@ from module.employee.serializers.employee_serializer import EmployeeSerializer
 
 
 class EmployeeDetailView(APIView):
+    """
+    This class is working with a explicit given employee, that is, all its methods need role_name
+    """
     repository = EmployeeRepository()
 
     def get(self, request: Request, employee_id: int) -> Response:

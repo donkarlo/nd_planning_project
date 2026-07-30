@@ -9,6 +9,8 @@ from django.db import connection, transaction
 
 EmployeeRow: TypeAlias = tuple[str, str, str]
 ShiftRow: TypeAlias = tuple[str, str, str, str]
+# for
+EmployeeRoleRow: TypeAlias = tuple[str, str, str, str]
 
 EMPLOYEES: Final[tuple[EmployeeRow, ...]] = (
     (
@@ -108,17 +110,33 @@ SHIFTS: Final[tuple[ShiftRow, ...]] = (
     ),
 )
 
+ROLES: Final[tuple[EmployeeRoleRow, ...]] = (
+    (
+        "ali.zamni@somehow.com",
+        "manager",
+        "2026-07-25T09:00:00+02:00",
+        "2026-07-25T17:30:00+02:00",
+    ),
+    (
+        "ali.zamni@somehow.com",
+        "supervisor",
+        "2026-07-25T09:00:00+02:00",
+        "2026-07-25T17:30:00+02:00",
+    ),
+    (
+        "mohammad.rahmani.xyz@gmal.com",
+        "inspektor",
+        "2026-07-25T09:00:00+02:00",
+        "2026-07-25T17:30:00+02:00",
+    ),
+)
+
 
 class Command(BaseCommand):
     help = "Create idempotent demo employees and work shifts."
 
-    def handle(
-            self,
-            *args: object,
-            **options: object,
-    ) -> None:
+    def handle(self, *args: object, **options: object,) -> None:
         employee_ids: dict[str, int] = {}
-
         with transaction.atomic():
             with connection.cursor() as cursor:
                 for first_name, last_name, email in EMPLOYEES:
@@ -197,6 +215,38 @@ class Command(BaseCommand):
                             employee_id,
                             start_time,
                             end_time,
+                        ],
+                    )
+                # Adding roles
+                for email, role_name, created_at, updated_at in ROLES:
+                    employee_id = employee_ids[email]
+
+                    cursor.execute(
+                        """
+                        INSERT INTO employees_roles (
+                            employee_id,
+                            role_name,
+                            created_at,
+                            updated_at
+                        )
+                        SELECT
+                            %s,
+                            %s,
+                            %s::timestamptz,
+                            %s::timestamptz
+                        WHERE NOT EXISTS (
+                            SELECT 1
+                            FROM employees_roles
+                            WHERE employee_id = %s AND role_name = %s
+                        );
+                        """,
+                        [
+                            employee_id,
+                            role_name,
+                            created_at,
+                            updated_at,
+                            employee_id,
+                            role_name
                         ],
                     )
 

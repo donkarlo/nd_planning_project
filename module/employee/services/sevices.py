@@ -1,7 +1,8 @@
 class Sevices:
     """
-    All services are responsible for logic and coordinates between multiple repositories to determine things such as authorized operations
+    All service are responsible for logic and coordinates between multiple repository to determine things such as authorized actions
     - Don't include JsonResponse building or write Sql here
     """
-    def __init__(self):
+
+    def __init__(self) -> None:
         pass

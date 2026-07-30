@@ -1,0 +1,64 @@
+commands:
+  employee:
+    insert: |
+      curl -s -X POST http://localhost:8000/api/employees/ -H "Content-Type: application/json" -d '{"first_name":"Mani","last_name":"Rad","email":"mani.rad@example.com"}' | jq
+
+    select_all: |
+      curl -s http://localhost:8000/api/employees/ | jq
+
+    select_one: |
+      curl -s http://localhost:8000/api/employees/2/ | jq
+
+    replace: |
+      curl -s -X PUT http://localhost:8000/api/employees/2/ -H "Content-Type: application/json" -d '{"first_name":"Ali","last_name":"Ahmadi","email":"ali.ahmadi@example.com"}' | jq
+
+    partial_update: |
+      curl -s -X PATCH http://localhost:8000/api/employees/2/ -H "Content-Type: application/json" -d '{"last_name":"Karimi"}' | jq
+
+    delete: |
+      curl -s -X DELETE http://localhost:8000/api/employees/4/
+
+  work_shift:
+    insert: |
+      curl -s -X POST http://localhost:8000/api/employees/2/time-tracking/ -H "Content-Type: application/json" -d '{"start_time":"2030-01-01T08:00:00+01:00","end_time":"2030-01-01T16:00:00+01:00","note":"Morning shift"}' | jq
+
+    select_all: |
+      curl -s http://localhost:8000/api/employees/2/time-tracking/ | jq
+
+    select_one: |
+      curl -s http://localhost:8000/api/employees/2/time-tracking/1/ | jq
+
+    replace: |
+      curl -s -X PUT http://localhost:8000/api/employees/2/time-tracking/1/ -H "Content-Type: application/json" -d '{"start_time":"2030-01-02T08:00:00+01:00","end_time":"2030-01-02T17:00:00+01:00","note":"Updated shift"}' | jq
+
+    partial_update: |
+      curl -s -X PATCH http://localhost:8000/api/employees/2/time-tracking/1/ -H "Content-Type: application/json" -d '{"note":"Updated note"}' | jq
+
+    delete: |
+      curl -s -X DELETE http://localhost:8000/api/employees/2/time-tracking/1/
+
+    summary: |
+      curl -s http://localhost:8000/api/employees/2/time-tracking/summary/ | jq
+
+  statistics:
+    global: |
+      curl -s http://localhost:8000/api/employees/time-tracking/statistics/ | jq
+
+  role:
+    insert: |
+      curl -s -X POST http://localhost:8000/api/employees/2/role/ -H "Content-Type: application/json" -d '{"role_name":"manager"}' | jq
+
+    select_all: |
+      curl -s http://localhost:8000/api/employees/2/role/ | jq
+
+    select_one: |
+      curl -s http://localhost:8000/api/employees/2/role/manager/ | jq
+
+    replace: |
+      curl -s -X PUT http://localhost:8000/api/employees/2/role/manager/ -H "Content-Type: application/json" -d '{"role_name":"supervisor"}' | jq
+
+    partial_update: |
+      curl -s -X PATCH http://localhost:8000/api/employees/2/role/supervisor/ -H "Content-Type: application/json" -d '{"role_name":"administrator"}' | jq
+
+    delete: |
+      curl -s -X DELETE http://localhost:8000/api/employees/2/role/administrator/
