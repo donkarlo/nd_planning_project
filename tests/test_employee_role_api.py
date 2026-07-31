@@ -24,6 +24,7 @@ class EmployeeRoleApiTest(TestCase):
             format="json",
         )
 
+        # succesful response
         self.assertEqual(employee_response.status_code, 201)
 
         self.employee_id = int(

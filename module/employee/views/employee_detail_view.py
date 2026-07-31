@@ -11,6 +11,7 @@ from module.employee.serializers.employee_serializer import EmployeeSerializer
 class EmployeeDetailView(APIView):
     """
     This class is working with a explicit given employee, that is, all its methods need role_name
+    - an employee id is needed for all methods in this request
     """
     repository = EmployeeRepository()
 

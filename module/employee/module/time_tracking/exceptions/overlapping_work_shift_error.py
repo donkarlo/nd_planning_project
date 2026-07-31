@@ -1,0 +1,2 @@
+class OverlappingWorkShiftError(Exception):
+    pass

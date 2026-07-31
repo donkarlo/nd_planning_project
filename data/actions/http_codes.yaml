@@ -1,0 +1,46 @@
+http_status_codes:
+  200:
+    name: OK
+    constant: HTTP_200_OK
+    used_for:
+      - GET requests
+      - PUT requests
+      - PATCH requests
+      - Employee summary
+      - Global statistics
+    note: Returned implicitly when no status is specified.
+
+  201:
+    name: Created
+    constant: HTTP_201_CREATED
+    used_for:
+      - Creating an employee
+      - Creating a work shift
+      - Creating an employee role
+
+  204:
+    name: No Content
+    constant: HTTP_204_NO_CONTENT
+    used_for:
+      - Deleting an employee
+      - Deleting a work shift
+      - Deleting an employee role
+
+  400:
+    name: Bad Request
+    constant: HTTP_400_BAD_REQUEST
+    used_for:
+      - Invalid request data
+      - Duplicate employee email
+      - Duplicate employee role
+      - Empty role name
+      - Invalid start and end times
+      - Overlapping work shifts
+
+  404:
+    name: Not Found
+    constant: HTTP_404_NOT_FOUND
+    used_for:
+      - Employee not found
+      - Work shift not found
+      - Employee role not found
