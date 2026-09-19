@@ -1,0 +1,14 @@
+name: Temporary planning source artifact
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: planning-patched-sources
+          path: chatgpt_staging_20260919/
+          retention-days: 1
