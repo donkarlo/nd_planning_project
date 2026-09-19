@@ -12,3 +12,4 @@ jobs:
           name: planning-patched-sources
           path: chatgpt_staging_20260919/
           retention-days: 1
+          if-no-files-found: error
